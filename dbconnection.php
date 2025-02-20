@@ -1,0 +1,1 @@
+<?php // Archivo para conexión a base de datos

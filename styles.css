@@ -1,0 +1,60 @@
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: rgb(177, 177, 177);
+}
+
+h1 {
+    font-size: 40px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+}
+
+#login-btn {
+    height: 35px;
+    width: 40px;
+    background-color: rgb(54, 54, 54);
+    color: white;
+    font-size: 10px;
+    border-style: solid;
+    border-width: 2px;
+    display: flex;
+    float: right;
+    margin-right: 70px;
+}
+
+#login-btn:hover {
+    background-color: rgb(20, 20, 20);
+}
+
+#data-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+#data {
+    background-color: white;
+    width: 600px;
+    height: 400px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    margin-top: 50px;
+}
+
+#data p {
+    margin-left: 60px;
+
+}
+
+#data1 {
+    margin-top: 50px;
+}
