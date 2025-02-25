@@ -19,15 +19,34 @@ h1 {
     width: 60px;
     background-color: rgb(54, 54, 54);
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     border-style: solid;
     border-width: 2px;
     display: flex;
     float: right;
-    margin-right: 70px;
+    right: 70px;
+    position: absolute;
 }
 
 #login-btn:hover {
+    background-color: rgb(20, 20, 20);
+}
+
+#enviar {
+    height: 30px;
+    width: 80px;
+    background-color: rgb(54, 54, 54);
+    color: white;
+    font-size: 13px;
+    border-style: solid;
+    border-width: 2px;
+    display: flex;
+    margin-top: 27px;
+    margin-bottom: 50px;
+    margin-left: 60px;
+}
+
+#enviar:hover {
     background-color: rgb(20, 20, 20);
 }
 
@@ -40,7 +59,7 @@ h1 {
 #data {
     background-color: white;
     width: 600px;
-    height: 400px;
+    height: 500px;
     border-style: solid;
     border-width: 2px;
     border-color: black;
@@ -53,6 +72,13 @@ h1 {
 #data p {
     margin-left: 60px;
 
+}
+
+#comentario {
+    margin-left: 60px;
+    margin-right: 120px;
+    margin-top: 10px;
+    width: 400px;
 }
 
 #data1 {

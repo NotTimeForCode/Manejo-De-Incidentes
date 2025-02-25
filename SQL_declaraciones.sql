@@ -9,6 +9,5 @@ CREATE TABLE IF NOT EXISTS `incident-logs` (
   `log_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
-USE 'incidents';
 INSERT INTO incident_logs (hostname, user, incident)
 VALUES ('dyna_automocion_001', 'user1', 'problem1');

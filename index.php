@@ -4,75 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página principal</title>
-    <link rel="stylesheet" href="styles.css"></link>
+    <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
 
 <body>
 
 <?php
-    start_session();
-    // Obtener datos de incidentes de la base de datos
-    $stmt = $pdo->prepare("SELECT * FROM incidents WHERE incident_id = ?");
-    $stmt->execute([$incident_id]);
-    $incident_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    require_once 'dbconnection.php';
 
-    //ip servidor mariadb
-    $servername = "192.168.101.60";
-    //usuario y password del mariadb
-    $username = "webpage";
-    $password = "1234";
-    $dbname = "incidents";
-
-    // Crear conexión
-    $conn = new mysqli($servername, $username, $password, $dbname);
-        
-    // Verificar conexión
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-
+    // Compruebe si los parámetros GET necesarios están configurados
+if (isset($_GET["hostname"], $_GET["user"], $_GET["incident_id"], $_GET["incident"], $_GET["log_time"])) {
     //usuario y contraseña que llegan del formulario
     $hostname = $_GET["hostname"];
     $user = $_GET["user"];
     $incident_id = $_GET["incident_id"];
     $incident = $_GET["incident"];
     $log_time = $_GET["log_time"];
+    $account = $_GET["account"];
+    $password = $_GET["password"];
+} else {
+    die("Faltan parámetros obligatorios.");
+}
 
-    // $sql = "SELECT * FROM incidents where hostname = $hostname and user = $user and incident_id = $incident_id and incident = $incident and log_time = $log_time;";
+    // Obtener datos de incidentes de la base de datos 
+    $stmt = $conn->prepare("SELECT * FROM incident_logs WHERE incident_id = ?");
+    $stmt->bind_param("i", $incident_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $incident_data = $result->fetch_assoc();
+
+    if (!$incident_data) {
+        die("No se encontró ningún incidente con el ID proporcionado.");
+    }
+
+     //usuario y contraseña que llegan del formulario
+     $account = $_GET["account"];
+     $password = $_GET["password"]; 
+
+    $sqlQuery2 = "SELECT * FROM incident_logs where account = $account and pass = $password;";
 
     //enviamos la query a la base de datos
-    $datos = mysqli_query($conn, $sql);
+    $datos = mysqli_query($conn, $sqlQuery2);
 
     //miramos si los datos tienen mas de 0 fila
     if (mysqli_num_rows($datos) > 0) {
         // output data of each row
         while($fila = mysqli_fetch_assoc($datos)) {
-        echo "<h1>id: " . $fila["id"]. " - Name: " . $fila["usuarios"]. " " . $fila["pass"]. "</h1>";
+        echo "<h1>id: " . $fila["id"]. " - Name: " . $fila["account"]. " " . $fila["pass"]. "</h1>";
         }
     } else {
         echo "<h1>no ha encontrado el usuario</h1>";
     }
 
+
+
+
+    // Declaración preparada para evitar la inyección SQL
+    $sql = "SELECT * FROM incident_logs";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssisi", $hostname, $user, $incident_id, $incident, $log_time);
+    $stmt->execute();
+    $datos = $stmt->get_result();
+
+    $stmt->close();
+    $conn->close();
+
     ?>
 
 
-<input type="button" id='login-btn' value="Login"></input>
+<input type="button" id='login-btn' value="Login">
 <h1>Página principal</h1>
 <div id="data-container">
     <div id="data">
 
-        <p id="data1">nombre de host:<p><?= htmlspecialchars($incident_data['hostname']) ?></p> </p>
+        <p id="data1">nombre de host: <?= htmlspecialchars($incident_data['hostname']) ?></p>
         <br>
-        <p id="data2">nombre del usuario:<p><?= htmlspecialchars($incident_data['user']) ?></p> </p>
+        <p id="data2">nombre del usuario: <?= htmlspecialchars($incident_data['user']) ?></p>
         <br>
-        <p id="data3">número de incidente:<p><?= htmlspecialchars($incident_data['incident_id']) ?></p> </p>
+        <p id="data3">número de incidente: <?= htmlspecialchars($incident_data['incident_id']) ?></p>
         <br>
-        <p id="data4">información sobre el incidente:<p><?= htmlspecialchars($incident_data['incident']) ?></p> </p>
+        <p id="data4">información sobre el incidente: <?= htmlspecialchars($incident_data['incident']) ?></p>
         <br>
-        <p id="data5">Hora en que se registró el incidente:<p><?= htmlspecialchars($incident_data['log_time']) ?></p> </p>
-
+        <p id="data5">Hora en que se registró el incidente: <?= htmlspecialchars($incident_data['log_time']) ?></p>
+        
+        <form action="submit.php" method="post">
+            <input type="hidden" name="incident_id" value="<?= $incident_id ?>">
+            <input type="text" name="comentario" id="comentario" value="Retroalimentación sobre el incidente...">
+            <input type="submit" value="Enviar" id="enviar">
+        </form>
     </div>
 <br>
 
