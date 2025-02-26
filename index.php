@@ -13,88 +13,79 @@
 <?php
     require_once 'dbconnection.php';
 
-    // Compruebe si los parámetros GET necesarios están configurados
-if (isset($_GET["hostname"], $_GET["user"], $_GET["incident_id"], $_GET["incident"], $_GET["log_time"])) {
-    //usuario y contraseña que llegan del formulario
-    $hostname = $_GET["hostname"];
-    $user = $_GET["user"];
-    $incident_id = $_GET["incident_id"];
-    $incident = $_GET["incident"];
-    $log_time = $_GET["log_time"];
-    $account = $_GET["account"];
-    $password = $_GET["password"];
-} else {
-    die("Faltan parámetros obligatorios.");
-}
+    $sqlQuery = "SELECT * FROM incident_logs;";
 
-    // Obtener datos de incidentes de la base de datos 
-    $stmt = $conn->prepare("SELECT * FROM incident_logs WHERE incident_id = ?");
-    $stmt->bind_param("i", $incident_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $incident_data = $result->fetch_assoc();
+    //send the query
+    $data = mysqli_query($conn, $sqlQuery);
 
-    if (!$incident_data) {
-        die("No se encontró ningún incidente con el ID proporcionado.");
-    }
-
-     //usuario y contraseña que llegan del formulario
-     $account = $_GET["account"];
-     $password = $_GET["password"]; 
-
-    $sqlQuery2 = "SELECT * FROM incident_logs where account = $account and pass = $password;";
-
-    //enviamos la query a la base de datos
-    $datos = mysqli_query($conn, $sqlQuery2);
-
-    //miramos si los datos tienen mas de 0 fila
-    if (mysqli_num_rows($datos) > 0) {
+    //look if the query has more than 0 rows
+    if (mysqli_num_rows($data) > 0) {
         // output data of each row
-        while($fila = mysqli_fetch_assoc($datos)) {
-        echo "<h1>id: " . $fila["id"]. " - Name: " . $fila["account"]. " " . $fila["pass"]. "</h1>";
-        }
+        while($row = mysqli_fetch_assoc($data)) {
+        echo "<h3> Hostname: " . $row["hostname"].  " User: " . $row["user"]. " id: " . $row["incident_id"]. " incident: " . $row["incident"]. " log time: " . $row["log_time"]. "</h3>";
+        $hostname = $row["hostname"];
+        $user = $row["user"];
+        $incident_id = $row["incident_id"];
+        $incident = $row["incident"];
+        $log_time = $row["log_time"];
+    }
     } else {
-        echo "<h1>no ha encontrado el usuario</h1>";
+        echo "<h1>didnt work</h1>";
     }
 
-
-
-
-    // Declaración preparada para evitar la inyección SQL
-    $sql = "SELECT * FROM incident_logs";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssisi", $hostname, $user, $incident_id, $incident, $log_time);
-    $stmt->execute();
-    $datos = $stmt->get_result();
-
-    $stmt->close();
-    $conn->close();
-
-    ?>
+?>
 
 
 <input type="button" id='login-btn' value="Login">
 <h1>Página principal</h1>
-<div id="data-container">
-    <div id="data">
 
-        <p id="data1">nombre de host: <?= htmlspecialchars($incident_data['hostname']) ?></p>
-        <br>
-        <p id="data2">nombre del usuario: <?= htmlspecialchars($incident_data['user']) ?></p>
-        <br>
-        <p id="data3">número de incidente: <?= htmlspecialchars($incident_data['incident_id']) ?></p>
-        <br>
-        <p id="data4">información sobre el incidente: <?= htmlspecialchars($incident_data['incident']) ?></p>
-        <br>
-        <p id="data5">Hora en que se registró el incidente: <?= htmlspecialchars($incident_data['log_time']) ?></p>
-        
-        <form action="submit.php" method="post">
-            <input type="hidden" name="incident_id" value="<?= $incident_id ?>">
-            <input type="text" name="comentario" id="comentario" value="Retroalimentación sobre el incidente...">
-            <input type="submit" value="Enviar" id="enviar">
-        </form>
+<div id="main-container">
+    <!-- Shows all reported incidents.--> 
+
+    <!--Write foreach to create a button for every single incident_id in DB
+    if clicked, leave button highlighted-->
+    <div id="incident_selector_container">
+
+        <button class="incident_selector">Incident_1</button>
+        <button class="incident_selector">Incident_2</button>
+        <button class="incident_selector">Incident_3</button>
+        <button class="incident_selector">Incident_4</button>
+        <button class="incident_selector">Incident_5</button>
+        <button class="incident_selector">Incident_6</button>
+        <button class="incident_selector">Incident_7</button>
+        <button class="incident_selector">Incident_8</button>
+        <button class="incident_selector">Incident_9</button>
+        <button class="incident_selector">Incident_10</button>
+        <button class="incident_selector">Incident_11</button>
+        <button class="incident_selector">Incident_12</button>
+        <button class="incident_selector">Incident_13</button>
+        <button class="incident_selector">Incident_14</button>
+
+
     </div>
-<br>
+ 
+    <!-- Holds all data retrieved from database -->
+    <div id="data-container">
+        <div id="data">
+
+            <p id="data1">nombre de host: <?= htmlspecialchars($hostname) ?></p>
+            <br>
+            <p id="data2">nombre del usuario: <?= htmlspecialchars($user) ?></p>
+            <br>
+            <p id="data3">número de incidente: <?= htmlspecialchars($incident_id) ?></p>
+            <br>
+            <p id="data4">información sobre el incidente: <?= htmlspecialchars($incident) ?></p>
+            <br>
+            <p id="data5">Hora en que se registró el incidente: <?= htmlspecialchars($log_time) ?></p>
+
+            <form action="submit.php" method="post">
+                <input type="hidden" name="incident_id" value="<?= $incident_id ?>">
+                <input type="text" name="comentario" id="comentario" placeholder="Retroalimentación sobre el incidente...">
+                <input type="submit" value="Enviar" id="enviar">
+            </form>
+        </div>
+    <br>
+</div>
 
 </div>
 </body>
