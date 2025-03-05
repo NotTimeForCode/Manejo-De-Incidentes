@@ -69,12 +69,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateFormAction() {
+        console.log('updateFormAction called'); // Debugging: Log function call
         const selectedIncidentId = selectedIncidentIdField.value;
-        const url = new URL(window.location);
+        console.log(`selectedIncidentId: ${selectedIncidentId}`); // Debugging: Log the selected incident ID
         if (selectedIncidentId) {
-            url.searchParams.set('selected_incident_id', selectedIncidentId);
+            const currentUrl = new URL(window.location.href);
+            console.log(`Current URL: ${currentUrl}`); // Debugging: Log the current URL
+            currentUrl.searchParams.set('selected_incident_id', selectedIncidentId);
+            form.action = currentUrl.toString();
+            console.log(`Updated form action: ${form.action}`); // Debugging: Log the updated form action URL
         }
-        form.action = url.toString();
+    }
+
+    function logFormData() {
+        const formData = new FormData(form);
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
     }
 
     buttons.forEach(button => {
@@ -87,16 +98,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Automatically select the previously selected incident button when the page loads
     const selectedIncidentId = selectedIncidentIdField.value;
+    console.log(`selectedIncidentId: ${selectedIncidentId}`);
 
-    if (selectedIncidentIdField.value) {
-        const selectedButton = document.querySelector(`.incident_selector[data-incident-id="${selectedIncidentId}"]`)
+    if (selectedIncidentId) {
+        const selectedButton = document.querySelector(`.incident_selector[data-incident-id="${selectedIncidentId}"]`);
+        console.log(selectedButton);
         if (selectedButton) {
-            console.log('program worked');
+            console.log('URL query is exists');
             updateFormFields(selectedButton);
             highlighter(selectedButton);
         }
     } else if (buttons.length > 0) {
-        console.log('program didnt work');
+        console.log('URL query does not exist');
         updateFormFields(buttons[0]);
         highlighter(buttons[0]);
     }
@@ -104,34 +117,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission for "Concluir incidente"
     document.querySelector('.form_button.concluir').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
+        console.log('Concluir button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'Concluded';
         feedbackField.value = detailsField.value; // Set feedback value
         detailsField.setAttribute('name', 'details'); // Ensure details field is included
-        updateFormAction();
+        //updateFormAction();
+        logFormData(); // Log form data before submission
         form.submit();
     });
 
     // Handle form submission for "En proceso"
     document.querySelector('.form_button.proceso').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
+        console.log('En proceso button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'In process';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        updateFormAction();
+        //updateFormAction();
+        logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
 
     document.querySelector('.form_button.neutral').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
+        console.log('Neutral button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'Neutral';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        updateFormAction();
+        //updateFormAction();
+        logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
 
     // Re-add the details field name when the form is submitted for "Concluir incidente"
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function() {
         if (incidentStatusField.value === 'Concluded') {
             detailsField.setAttribute('name', 'details');
         }

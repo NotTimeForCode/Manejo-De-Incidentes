@@ -21,7 +21,6 @@ To-Do List:
         allow use of program if(loggedIn = true)
 
     search bar:
-        back function for search
-        last search 
-        search stays when page is reloaded/data is sent to the db
-        currently selected incident stays when page is reloaded/data is sent to the db
+        back function for search (in consideration)
+        search stays when page is data is sent to the db
+        currently selected incident stays when data is sent to the db

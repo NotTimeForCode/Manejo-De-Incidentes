@@ -45,7 +45,7 @@
                 $incident_logs[] = $row;
             }
         } else {
-            echo "<h1>Error</h1>";
+            echo "<h1>Error: no incidents found</h1>";
         }
     }
 
@@ -76,6 +76,7 @@
                     data-log-time="<?= htmlspecialchars($incidents['log_time']) ?>">
                     <?= htmlspecialchars($incidents['hostname'])?>
                     <br>
+                    <?= "id_" . htmlspecialchars($incidents['incident_id'])?>
                     <?= htmlspecialchars($incidents['user'])?>
                 </button>
             <?php endforeach; ?>
