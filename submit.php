@@ -2,34 +2,33 @@
 require_once 'dbconnection.php';
 
 // Receives form data
-$hostname = isset($_POST['hostname']) ? $_POST['hostname'] : '';
-$user = isset($_POST['user']) ? $_POST['user'] : '';
-$incident_id = isset($_POST['incident_id']) ? $_POST['incident_id'] : '';
-$incident = isset($_POST['incident']) ? $_POST['incident'] : '';
-$log_time = isset($_POST['log_time']) ? $_POST['log_time'] : '';
 $details = isset($_POST['details']) ? $_POST['details'] : '';
+$incident_id = isset($_POST['incident_id']) ? $_POST['incident_id'] : '';
+$incident_status = isset($_POST['incident_status']) ? $_POST['incident_status'] : '';
 
-// Prepares the SQL query
-$sqlInsert = "INSERT INTO concluded_incidents (hostname, user, incident_id, incident, log_time, details) 
-VALUES (?, ?, ?, ?, ?, ?)";
+// Prepares the SQL query to update incident_status
+$sqlUpdate = "UPDATE incident_logs SET incident_status = ?, details = ? WHERE incident_id = ?";
+$stmtUpdate = $conn->prepare($sqlUpdate);
+$stmtUpdate->bind_param("ssi", $incident_status, $details, $incident_id);
 
-$stmtInsert = $conn->prepare($sqlInsert);
-$stmtInsert->bind_param("ssisss", $hostname, $user, $incident_id, $incident, $log_time, $details);
+// Update incident_status in the database
+if ($stmtUpdate->execute()) {
+    header("Location: index.php");
+    exit();
+} else {
+    echo "Error updating record: " . $conn->error;
+}
 
-// Add data to the database
-    if ($stmtInsert->execute()) {
+// Update incident_status in the database
+/*$response = [];
+if ($stmtUpdate->execute()) {
+    $response['status'] = 'success';
+    $response['message'] = 'Incident status updated successfully.';
+} else {
+    $response['status'] = 'error';
+    $response['message'] = 'Error updating incident status: ' . $conn->error;
+}
 
-       /* $sqlDelete = "DELETE FROM incident_logs WHERE incident_id = ?";
-        $stmtDelete = $conn->prepare($sqlDelete);
-        $stmtDelete->bind_param("i", $incident_id);
-    
-        if ($stmtDelete->execute()) {
-            header("Location: index.php");
-            exit();                                 // uncomment when program is finished
-        } else {
-            echo "Error deleting record: " . $conn->error;
-        }*/
-        header("Location: index.php");
-    } else {
-        echo "Error inserting record: " . $conn->error;
-    }
+header('Content-Type: application/json');
+echo json_encode($response);*/
+?>

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `incident-logs` (
 CREATE TABLE IF NOT EXISTS `concluded_incidents` (
   `hostname` varchar(255) NOT NULL,
   `user` varchar(50) NOT NULL,
-  `incident_id` int(11) NOT NULL UNIQUE,
+  `incident_id` int(11) NOT NULL UNIQUE,                        /* No longer used */
   `incident` text NOT NULL,
   `log_time` DATETIME NOT NULL,
   `details` text
@@ -30,3 +30,5 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO incident_logs (hostname, user, incident)
 VALUES ('dyna_automocion_001', 'user1', 'problem1');
+
+UPDATE `incident_logs` SET `incident_status` = 'Neutral' WHERE `incident_logs`.`incident_status` = 'Concluded';

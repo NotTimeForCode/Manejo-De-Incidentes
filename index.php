@@ -13,93 +13,113 @@
 <?php
     require_once 'dbconnection.php';
 
-    $sqlQuery = "SELECT * FROM incident_logs;";
-    
-    //send the query
-    $data = mysqli_query($conn, $sqlQuery);
+    $keyword = isset($_GET['search']) ? $_GET['search'] : '';
 
-    $incident_logs = [];
+    if ($keyword) {
+        // Prepare the SQL query to search based on hostname and user
+        $sqlQuery = "SELECT * FROM `incident_logs` WHERE `hostname` LIKE ? OR `user` LIKE ? ORDER BY `hostname`";
+        $stmt = $conn->prepare($sqlQuery);
+        $searchTerm = '%' . $keyword . '%';
+        $stmt->bind_param('ss', $searchTerm, $searchTerm);
 
-    //look if the query has more than 0 rows
-    if (mysqli_num_rows($data) > 0) {
-        // output data of each row
-        while($row = mysqli_fetch_assoc($data)) {
-        // echo "<h3> Hostname: " . $row["hostname"].  " User: " . $row["user"]. " id: " . $row["incident_id"]. " incident: " . $row["incident"]. " log time: " . $row["log_time"]. "</h3>";
-        $hostname = $row["hostname"];
-        $user = $row["user"];
-        $incident_id = $row["incident_id"];
-        $incident = $row["incident"];
-        $log_time = $row["log_time"];
-        $incident_logs[] = $row;
-    }
-    
+        // Execute the query
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Fetch the results
+        $incident_logs = [];
+        while ($row = $result->fetch_assoc()) {
+            $incident_logs[] = $row;
+        }
+
+        // Close the statement
+        $stmt->close();
     } else {
-        echo "<h1>Error: line 37</h1>";
+        $sqlQuery = "SELECT * FROM incident_logs WHERE incident_status IS NULL OR incident_status = 'Neutral' OR incident_status = 'In process'";
+        $data = mysqli_query($conn, $sqlQuery);
+
+        $incident_logs = [];
+
+        if (mysqli_num_rows($data) > 0) {
+            while ($row = mysqli_fetch_assoc($data)) {
+                $incident_logs[] = $row;
+            }
+        } else {
+            echo "<h1>Error</h1>";
+        }
     }
 
+    // Close the connection
+    $conn->close();
 ?>
-
 
 <input type="button" id='login-btn' value="Login">
 <h1>Manejo de incidentes</h1>
 
 <div id="main-container">
 
-    <!-- Shows all reported incidents.--> 
-    <div id="incident_selector_container">
-        <?php foreach ($incident_logs as $incidents): ?>
-            <button class="incident_selector"
-                data-incident-id="<?= htmlspecialchars($incidents['incident_id']) ?>"
-                data-hostname="<?= htmlspecialchars($incidents['hostname']) ?>"
-                data-user="<?= htmlspecialchars($incidents['user']) ?>"
-                data-incident="<?= htmlspecialchars($incidents['incident']) ?>"
-                data-log-time="<?= htmlspecialchars($incidents['log_time']) ?>">
-                <?="Incident_" . htmlspecialchars($incidents['incident_id'])?>
-                <?= htmlspecialchars($incidents['hostname'])?>
-            </button>
+    <div id="box-container">
+            <!-- Search bar -->
+            <form action="index.php" method="get" id="search-form">
+                <input type="text" placeholder="Search by hostname or user..." name="search" id="search">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
 
-        <?php endforeach; ?>
+        <!-- Shows all reported incidents.--> 
+        <div id="incident_selector_container">
+            <?php foreach ($incident_logs as $incidents): ?>
+                <button class="incident_selector <?= $incidents['incident_status'] === 'In process' ? 'in_process' : ($incidents['incident_status'] === 'Neutral' ? 'neutral' : '') ?>"
+                    data-incident-id="<?= htmlspecialchars($incidents['incident_id']) ?>"
+                    data-hostname="<?= htmlspecialchars($incidents['hostname']) ?>"
+                    data-user="<?= htmlspecialchars($incidents['user']) ?>"
+                    data-incident="<?= htmlspecialchars($incidents['incident']) ?>"
+                    data-log-time="<?= htmlspecialchars($incidents['log_time']) ?>">
+                    <?= htmlspecialchars($incidents['hostname'])?>
+                    <br>
+                    <?= htmlspecialchars($incidents['user'])?>
+                </button>
+            <?php endforeach; ?>
+        </div>
     </div>
 
-    <div id="box-container">
 
-    <!-- Search bar -->
-    <form action="index.php">
-      <input type="text" placeholder="Search.." name="search" id="search">
-      <button type="submit"class="search-btn">Search</button>
-    </form>
 
     <!-- Holds all data retrieved from database -->
         <div id="data-container">
+            <!--displays user's last search query-->
+            <h2 id="last_search">Last search: <?= htmlspecialchars($keyword) ?></h2>
             <div id="data">
 
-                <form action="submit.php" method="post" name="incident_form" id="incident_form">
+            <form action="submit.php?selected_incident_id=<?= isset($_GET['selected_incident_id']) ? htmlspecialchars($_GET['selected_incident_id']) : '' ?>" method="post" name="incident_form" id="incident_form">
                     <input type="hidden" name="hostname" value="">
                     <input type="hidden" name="user" value="">
                     <input type="hidden" name="incident_id" value="">
                     <input type="hidden" name="incident" value="">
                     <input type="hidden" name="log_time" value="">
-                    <p id="data1">nombre de host: </p>
+                    <input type="hidden" name="incident_status" value="">
+                    <input type="hidden" name="selected_incident_id" id="selected_incident_id" value="<?= isset($_GET['selected_incident_id']) ? htmlspecialchars($_GET['selected_incident_id']) : '' ?>">
+                    <input type="hidden" name="feedback" id="feedback">
+                    <h2 id="data1">nombre de host: </h2>
                     <br>
-                    <p id="data2">nombre del usuario: </p>
+                    <h4 id="data2">nombre del usuario: </h4>
                     <br>
-                    <p id="data3">número de incidente: </p>
+                    <h4 id="data3">número de incidente: </h4>
                     <br>
-                    <p id="data4">información sobre el incidente: </p>
+                    <h4 id="data4">información sobre el incidente: </h4>
                     <br>
-                    <p id="data5">Hora en que se registró el incidente: </p>
+                    <h4 id="data5">Hora en que se registró el incidente: </h4>
                     <br>
-                    <textarea id="details" name="details" rows="4" placeholder="Retroalimentación sobre el incidente..."></textarea>
+                    <textarea id="details" name="details" rows="4" placeholder="Feedback on incident (sent upon conclusion)"></textarea>
                     <div id="status-btns">
-                        <input type="submit" value="Concluir incidente" class="form_button concluir">
-                        <input type="submit" value="En proceso" class="form_button proceso">
+                        <input type="submit" value="Conclude incident" id="concluir" class="form_button concluir">
+                        <input type="submit" value="In process" id="proceso" class="form_button proceso">
+                        <input type="submit" value="Neutral" id="neutral" class="form_button neutral">
                     </div>
                 </form>
 
             </div>
             <br>
         </div>
-    </div>
 </div>
 </body>
 </html>

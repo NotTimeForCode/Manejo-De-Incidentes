@@ -53,6 +53,7 @@ h1 {
 .concluir {
     display: flex;
     left: 0px;
+    margin-left: 115px;
 }
 
 #status-btns {
@@ -63,12 +64,19 @@ h1 {
     margin-right: 220px;
 }
 
+#search-form {
+    margin-bottom: 30px;
+    position: relative;
+    display: flex;
+    bottom: -15px;
+}
+
 #search {
     border-style: solid;
     border-color: black;
     border-width: 2px;
     height: 25px;
-    width: 300px;
+    width: 235px;
 }
 
 .search-btn {
@@ -77,7 +85,7 @@ h1 {
     border-color: black;
     border-width: 2px;
     height: 31px;
-    width: 80px;
+    width: 65px;
 }
 
 #main-container {
@@ -94,35 +102,64 @@ h1 {
 }
 
 #incident_selector_container {
-    width: 250px;
+    width: 303px;
     height: 600px;
     background-color: white;
     border-style: solid;
     border-width: 2px;
     border-color: black;
     position: relative;
-    left: 100px;
     display: flex;
     flex-direction: column;
     overflow: scroll;
-    margin-right: 200px;
+    margin-right: 50px;
 }
 
 .incident_selector {
-    width: 200px;
+    width: 250px;
     height: 60px;
     background-color: rgb(54, 54, 54);
     color: white;
     font-size: 18px;
     border-style: solid;
     border-width: 2px;
+    border-color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
     margin-left: 25px;
     flex-shrink: 0;
-    overflow: visible;
+}
+
+.incident_selector.neutral {
+    width: 250px;
+    height: 60px;
+    background-color: rgb(54, 54, 54);
+    color: white;
+    font-size: 18px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 25px;
+    flex-shrink: 0;
+}
+
+.incident_selector.in_process {
+    background-color: yellow;
+    color: black;
+    border-style: dashed;
+    border-width: 2px;
+    border-color: black;
+}
+
+.incident_selector.in_process:hover {
+    background-color: rgb(199, 199, 0);
+    color: black;
 }
 
 .incident_selector:hover {
@@ -130,27 +167,32 @@ h1 {
 }
 
 #data-container {
-
     display: flex;
+    position: relative;
     justify-content: center;
+    flex-direction: column;
+
 }
 
 #data {
     background-color: white;
     width: 600px;
-    height: 500px;
+    height: auto;
     border-style: solid;
     border-width: 2px;
     border-color: black;
     display: flex;
     position: relative;
     flex-direction: column;
-    margin-top: 30px;
 }
 
-#data p {
-    margin-left: 60px;
+#data h2 {
+    margin-left: 60px;;
+}
 
+#data h4 {
+    margin-left: 60px;
+    margin-top: 5px;
 }
 
 #details {
@@ -159,7 +201,7 @@ h1 {
     margin-top: 5px;
     margin-bottom: 7px;
     width: 400px;
-    height: 40px;
+    height: 100px;
 }
 
 #data1 {

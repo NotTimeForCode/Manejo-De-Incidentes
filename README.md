@@ -11,20 +11,17 @@ ls -la
 
 cat /var/log/apache2/error.log      // to see error logs
 
-should there be an incident conclusion time
-
 should there be a status besides in process and concluded that is something like paused or postponed
 
-When searching for an incident by hostname or user, should it show all the related incidents or should it display the most relevant one
-
-ask adrian about belgian exchange students
+select * from logs where hostname like "dyna-automocion-5"
 
 To-Do List:
-    login
-    search bar
-    incident_status
-    visual changes based on incident_status
+    login:
+        login page
+        allow use of program if(loggedIn = true)
 
-
-add login: users table in db
-           allow use of program if(loggedIn = true)
+    search bar:
+        back function for search
+        last search 
+        search stays when page is reloaded/data is sent to the db
+        currently selected incident stays when page is reloaded/data is sent to the db
