@@ -11,7 +11,7 @@
 <body>
 
 <?php
-    require_once 'dbconnection.php';
+    require_once 'session.php';
 
     $keyword = isset($_GET['search']) ? $_GET['search'] : '';
 
@@ -53,8 +53,11 @@
     $conn->close();
 ?>
 
-<input type="button" id='login-btn' value="Login">
-<h1>Manejo de incidentes</h1>
+<!--<a type="button" id='login-btn' value="Login">Login</a>-->
+<div id="header">
+    <h1>Manejo de incidentes</h1>
+    <div id="logout-container"><a href = "logout.php" id="logout-btn">Sign Out</a></div>
+</div>
 
 <div id="main-container">
 

@@ -69,22 +69,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateFormAction() {
-        console.log('updateFormAction called'); // Debugging: Log function call
-        const selectedIncidentId = selectedIncidentIdField.value;
-        console.log(`selectedIncidentId: ${selectedIncidentId}`); // Debugging: Log the selected incident ID
-        if (selectedIncidentId) {
-            const currentUrl = new URL(window.location.href);
-            console.log(`Current URL: ${currentUrl}`); // Debugging: Log the current URL
-            currentUrl.searchParams.set('selected_incident_id', selectedIncidentId);
-            form.action = currentUrl.toString();
-            console.log(`Updated form action: ${form.action}`); // Debugging: Log the updated form action URL
+        if (selectedIncidentIdField) {
+            console.log('updateFormAction called'); // Debugging: Log function call
+            const selectedIncidentId = selectedIncidentIdField.value;
+            console.log(` updateFormAction() selectedIncidentId: ${selectedIncidentId}`); // Debugging: Log the selected incident ID
+            if (selectedIncidentId) {
+                const currentUrl = new URL(window.location.href);
+                console.log(`Current URL: ${currentUrl}`); // Debugging: Log the current URL
+                currentUrl.searchParams.set('selected_incident_id', selectedIncidentId);
+                form.action = currentUrl.toString();
+                console.log(`Updated form action: ${form.action}`); // Debugging: Log the updated form action URL
+            }
+        } else { 
+            console.log('updateFormAction() not called'); // Debugging: Log function call
         }
     }
 
     function logFormData() {
         const formData = new FormData(form);
         for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
+            console.log(`logFormdata ${key}: ${value}`);
         }
     }
 
@@ -102,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (selectedIncidentId) {
         const selectedButton = document.querySelector(`.incident_selector[data-incident-id="${selectedIncidentId}"]`);
-        console.log(selectedButton);
+        console.log(`selectedButton: ${selectedButton}`);
         if (selectedButton) {
             console.log('URL query is exists');
             updateFormFields(selectedButton);
@@ -117,11 +121,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission for "Concluir incidente"
     document.querySelector('.form_button.concluir').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
-        console.log('Concluir button clicked'); // Debugging: Log button click
+        console.log('Conclude button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'Concluded';
         feedbackField.value = detailsField.value; // Set feedback value
         detailsField.setAttribute('name', 'details'); // Ensure details field is included
-        //updateFormAction();
+        updateFormAction();
         logFormData(); // Log form data before submission
         form.submit();
     });
@@ -129,11 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle form submission for "En proceso"
     document.querySelector('.form_button.proceso').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
-        console.log('En proceso button clicked'); // Debugging: Log button click
+        console.log('In Process button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'In process';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        //updateFormAction();
+        updateFormAction();
         logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
@@ -144,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incidentStatusField.value = 'Neutral';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        //updateFormAction();
+        updateFormAction();
         logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });

@@ -11,25 +11,46 @@ h1 {
     position: relative;
     display: flex;
     justify-content: center;
+
+}
+
+#header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    align-items: center;
+    justify-content: center;
     margin-top: 70px;
 }
 
-#login-btn {
-    height: 60px;
-    width: 60px;
+#logout-container {
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#logout-btn {
+    height: 30px;
+    width: 80px;
     background-color: rgb(54, 54, 54);
     color: white;
     font-size: 18px;
     border-style: solid;
     border-width: 2px;
+    border-color: white;
     display: flex;
-    float: right;
-    right: 70px;
-    position: absolute;
+    margin-left: 50px;
+    /*right: 70px;*/
+    position: relative;
+    /*z-index: 1;*/
+    text-decoration: none;
 }
 
-#login-btn:hover {
+#logout-btn:hover {
     background-color: rgb(20, 20, 20);
+    color: rgb(201, 201, 201);
+    border-color: rgb(201, 201, 201);
 }
 
 .form_button {
