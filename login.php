@@ -1,28 +1,37 @@
 <?php
    require_once 'dbconnection.php';
 
-   $error='';
-   if($_SERVER["REQUEST_METHOD"] == "POST") {
+   $error = '';
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+       // Get the username and password from the form
+       $myusername = mysqli_real_escape_string($conn, $_POST['username']);
+       $mypassword = mysqli_real_escape_string($conn, $_POST['password']);
    
-      // username and password sent from form 
-      $myusername = mysqli_real_escape_string($conn,$_POST['username']);
-      $mypassword = mysqli_real_escape_string($conn,$_POST['password']); 
-
-      $sql = "SELECT * FROM users WHERE username = '$myusername' and password = '$mypassword'";
-
-      $result = mysqli_query($conn,$sql);      
-      $row = mysqli_num_rows($result);      
-      $count = mysqli_num_rows($result);
-
-      if($count == 1) {
-	  
-         // session_register("myusername");
-         $_SESSION['login_user'] = $myusername;
-         header("location: index.php");
-      } else {
-         $error = "Your Login Name or Password is invalid";
-      }
+       // Prepare the SQL query to get the hashed password from the database
+       $sql = "SELECT * FROM users WHERE username = '$myusername'";
+       $result = mysqli_query($conn, $sql);
+       $row = mysqli_fetch_assoc($result);
+   
+       // Check if the user exists and verify the password
+       if ($row && password_verify($mypassword, $row['password'])) {
+           // Password is correct, start a session and redirect to the index page
+           session_start();
+           $_SESSION['login_user'] = $myusername;
+           header("location: index.php");
+       } else {
+           // Invalid username or password
+           $error = "Your Login Name or Password is invalid";
+       }
+   
+       // Close the connection
+       mysqli_close($conn);
    }
+   
+      if (!$_SESSION) {
+         print_r($_SESSION);
+      } else {
+         echo "No session";
+      }
 ?>
 <html>
 <head>
@@ -31,6 +40,8 @@
       body {
          font-family:Arial, Helvetica, sans-serif;
          font-size:14px;
+         background-color: rgb(197, 197, 197);
+
       }
       label {
          font-weight:bold;
@@ -42,7 +53,7 @@
       }
    </style>
 </head>
-<body bgcolor = "#FFFFFF">
+<body>
    <div align = "center">
       <div style = "width:300px; border: solid 1px #333333; " align = "left">
          <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Login</b></div>

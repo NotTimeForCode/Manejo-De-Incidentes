@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página principal</title>
+    <title>Manejo de incidentes</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
@@ -12,7 +12,10 @@
 
 <?php
     require_once 'session.php';
-
+    // make sure user is logged in
+    if(!$_SESSION['login_user']) {
+        header("location:login.php");
+    }
     $keyword = isset($_GET['search']) ? $_GET['search'] : '';
 
     if ($keyword) {
@@ -49,6 +52,18 @@
         }
     }
 
+    if ($_SESSION == "") {
+        header("Location: login.php");
+    }
+
+    /*if ($_SESSION) {
+        print_r($_SESSION);
+     } else {
+        echo "No session";
+     }*/
+
+    $_SESSION['redirect'] = 'index';
+
     // Close the connection
     $conn->close();
 ?>
@@ -56,7 +71,8 @@
 <!--<a type="button" id='login-btn' value="Login">Login</a>-->
 <div id="header">
     <h1>Manejo de incidentes</h1>
-    <div id="logout-container"><a href = "logout.php" id="logout-btn">Sign Out</a></div>
+    <a href="logout.php" id="logout-btn">Sign Out</a>
+    <a href="register.php" id="register-btn">To registeration</a>
 </div>
 
 <div id="main-container">

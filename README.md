@@ -13,12 +13,11 @@ cat /var/log/apache2/error.log      // to see error logs
 
 should there be a status besides in process and concluded that is something like paused or postponed
 
-select * from logs where hostname like "dyna-automocion-5"
-
+When an account is made, should an email have to be set, should it be optional or should it not be an option at all? Conclusion: If you have an account, you can create an account. Redirect to register.php from index.php or integrated into index.php.
 To-Do List:
     login:
-        login page
-        allow use of program if(loggedIn = true)
+        Registration
+        password hashing and verification
 
     search bar:
         back function for search (in consideration)

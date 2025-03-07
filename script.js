@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incidentStatusField.value = 'Concluded';
         feedbackField.value = detailsField.value; // Set feedback value
         detailsField.setAttribute('name', 'details'); // Ensure details field is included
-        updateFormAction();
+        //updateFormAction();
         logFormData(); // Log form data before submission
         form.submit();
     });
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incidentStatusField.value = 'In process';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        updateFormAction();
+        //updateFormAction();
         logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incidentStatusField.value = 'Neutral';
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
-        updateFormAction();
+        //updateFormAction();
         logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
