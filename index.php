@@ -9,12 +9,19 @@
 </head>
 
 <body>
-
+    
 <?php
     require_once 'session.php';
+
+    // Prevent chaching
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+
     // make sure user is logged in
     if(!$_SESSION['login_user']) {
         header("location:login.php");
+        exit();
     }
     $keyword = isset($_GET['search']) ? $_GET['search'] : '';
 
@@ -62,7 +69,7 @@
         echo "No session";
      }*/
 
-    $_SESSION['redirect'] = 'index';
+    $_SESSION['redirect'] = 'redirect';
 
     // Close the connection
     $conn->close();
@@ -71,10 +78,11 @@
 <!--<a type="button" id='login-btn' value="Login">Login</a>-->
 <div id="header">
     <h1>Manejo de incidentes</h1>
-    <a href="logout.php" id="logout-btn">Sign Out</a>
-    <a href="register.php" id="register-btn">To registeration</a>
+    <div id="btn-container">
+        <a href="logout.php" id="logout-btn">Sign Out</a>
+        <a href="register.php" id="register-btn">Account registration</a>
+    </div>
 </div>
-
 <div id="main-container">
 
     <div id="box-container">

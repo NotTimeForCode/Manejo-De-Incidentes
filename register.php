@@ -1,22 +1,23 @@
 <?php
     require_once 'session.php';
-    if(isset($login_session)) {
+    if(!isset($login_session)) {
+        echo 'You are already logged in';
         header("Location: index.php");
         exit();
     }
 
-    if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'index') {
+    if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'redirect') {
         header("Location: login.php");
         exit();
     }
 
     unset($_SESSION["redirect"]);
 
-        if ($_SESSION) {
+        /*if ($_SESSION) {
         print_r($_SESSION);
      } else {
         echo "No session";
-     }
+     }*/
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +43,7 @@
         </form>
 
         <p>Already have an account? <a href="login.php">Login here</a></p>
-
+        <a href="index.php">Return</a>
     </div>
 </body>
 </html>

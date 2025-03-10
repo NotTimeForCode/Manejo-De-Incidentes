@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackField.value = detailsField.value; // Set feedback value
         detailsField.setAttribute('name', 'details'); // Ensure details field is included
         //updateFormAction();
-        logFormData(); // Log form data before submission
+        //logFormData(); // Log form data before submission
         form.submit();
     });
 
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
         //updateFormAction();
-        logFormData(); // Log form data before submission
+        //logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
 
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackField.value = ''; // Clear feedback value
         detailsField.removeAttribute('name'); // Remove details field from form
         //updateFormAction();
-        logFormData(); // Log form data before submission
+        //logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
     });
 
