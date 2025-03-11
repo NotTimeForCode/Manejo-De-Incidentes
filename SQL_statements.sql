@@ -27,6 +27,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+CREATE TABLE `loginlogs` (
+`id` int(11) NOT NULL,
+`IpAddress` varbinary(16) NOT NULL,
+`TryTime` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 INSERT INTO incident_logs (hostname, user, incident)      /* Template for adding incidents */ 
 VALUES ('dyna_automocion_001', 'user1', 'problem1');
