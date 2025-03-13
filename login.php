@@ -1,79 +1,105 @@
 <?php
    require_once 'dbconnection.php';
 
-   $error = '';
-   $_success_message = ''; // Initialize the variable
-   $default_message = 'no redirection';
-   $_success_message = isset($_GET['success']) ? $_GET['success'] : '';
-   $msg='';
+   if (isset($_COOKIE['username']) && isset($_COOKIE['token'])) {
+       $username = $_COOKIE['username'];
+       $token = $_COOKIE['token'];
    
-   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-      
-      // Get the username and password from the form
-      $myusername = mysqli_real_escape_string($conn, $_POST['username']);
-      $mypassword = mysqli_real_escape_string($conn, $_POST['password']);
-
-      if ($myusername == '' || $mypassword == '') {
-         $error = 'Please enter a username and password';
-      } else {
-            // Prepare the SQL query to get the hashed password from the database
-         $sql = "SELECT * FROM users WHERE username = '$myusername'";
-         $result = mysqli_query($conn, $sql);
-         $row = mysqli_fetch_assoc($result);
-
-         // Check if the user exists and verify the password
-         if ($row && password_verify($mypassword, $row['password'])) {
-             // Password is correct, start a session and redirect to the index page
-             $_SESSION['login_user'] = $myusername;
-             header("location: index.php");
-             exit();
-         } else {
-             // Invalid username or password
-             $error = "Your Login Name or Password is invalid";
-         
-
-         // Borrowed (stolen) code
-         $time=time()-30;
-         $ip_address=getIpAddr();
-
-         // Getting total count of hits on the basis of IP
-         $query=mysqli_query($conn,"select count(*) as total_count from loginlogs where TryTime > $time and IpAddress='$ip_address'");
-         $check_login_row=mysqli_fetch_assoc($query);
-         $total_count=$check_login_row['total_count'];
-
-         //Checking if the attempt 3, or youcan set the no of attempt her. For now we taking only 3 fail attempted
-         if($total_count==3){
-            $msg="To many failed login attempts. Please login after 30 sec";
-         }else{
-
-            //Getting Post Values
-            $username=$_POST['username'];
-            $password=md5($_POST['password']); // change to hash and verify
-
-            // Coding for login
-            $res=mysqli_query($conn,"select * from users where username='$username' and password='$password'");
-
-            if(mysqli_num_rows($res)){
-               $_SESSION['login_user']='yes';
-               mysqli_query($conn,"delete from loginlogs where IpAddress='$ip_address'");
+       // Retrieve the hashed token from the database
+       $res = mysqli_query($conn, "SELECT token FROM users WHERE username='$username'");
+       if (mysqli_num_rows($res)) {
+           $row = mysqli_fetch_assoc($res);
+           $hashed_token = $row['token'];
+   
+           // Verify the token
+           if (password_verify($token, $hashed_token)) {
+               $_SESSION['login_user'] = 'yes';
                header('location:index.php');
-            }else{
-               $total_count++;
-               $rem_attm=3-$total_count;
-            if($rem_attm==0){
-               $msg="To many failed login attempts. Please login after 30 sec";
-            }else{
-               $msg="Please enter valid login details.<br/>$rem_attm attempts remaining";
-            }
-               $try_time=time();
-               mysqli_query($conn,"insert into loginlogs(IpAddress,TryTime) values('$ip_address','$try_time')");
+               exit();
+           }
+       }
+   }
+
+   $error = '';
+   $default_message = 'no redirection';
+   $msg='';
+
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      // Lockout parameters
+      $lock_time = 60; // seconds
+      $time_limit = time() - $lock_time;
+      $ip_address = getIpAddr();
+
+      // Getting Post Values
+      $username = mysqli_real_escape_string($conn, $_POST['username']);
+      $password = mysqli_real_escape_string($conn, $_POST['password']);
+      $remember = isset($_POST['remember']);
+      
+      // Get count of failed login attempts within the lock period
+      $query = mysqli_query($conn, "SELECT COUNT(*) as total_count FROM loginlogs WHERE TryTime > $time_limit AND IpAddress='$ip_address' AND username='$username'");
+      $check_login_row = mysqli_fetch_assoc($query);
+      $total_count = $check_login_row['total_count'];
+      
+      if ($total_count >= 3) {
+         // If attempts exceed the limit, do not process login
+         //$msg = "Too many failed login attempts. Please try again after $lock_time seconds.";
+         $_SESSION['msg'] = "Too many failed login attempts. Please try again after $lock_time seconds.";
+
+      } else {
+
+
+         if ($username == '' || $password == '') {
+            //$error = 'Please enter a username and password';
+            $_SESSION['error'] = 'Please enter a username and password';
+
+         } else {
+            // Coding for login
+            $res = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+            if (mysqli_num_rows($res)) {
+               $row = mysqli_fetch_assoc($res);
+               if (password_verify($password, $row['password'])) {
+                  $_SESSION['login_user'] = 'yes';
+                  mysqli_query($conn, "DELETE FROM loginlogs WHERE IpAddress='$ip_address' AND username='$username'");
+                  
+                  // Set cookies if "Remember Me" is checked
+                  if ($remember) {
+                     $token = bin2hex(random_bytes(16)); // Generate a random token
+                     setcookie('username', $username, time() + (86400 * 7), "/"); // 30 days
+                     setcookie('token', $token, time() + (86400 * 7), "/"); // 30 days
+                     
+                     // Store the token in the database
+                     $hashed_token = password_hash($token, PASSWORD_DEFAULT);
+                     mysqli_query($conn, "UPDATE users SET token='$hashed_token' WHERE username='$username'");
+                  }
+                  
+                  header('location:index.php');
+                  exit();
+               } else {
+                  // Increment count and compute remaining attempts
+                  $total_count++;
+                  $rem_attm = 3 - $total_count;
+                  
+                  if ($rem_attm <= 0) {
+                     //$msg = "Too many failed login attempts. Please try again after $lock_time seconds.";
+                     $_SESSION['msg'] = "Too many failed login attempts. Please try again after $lock_time seconds.";
+                  } else {                  
+                    //$msg = "Please enter valid login details. $rem_attm attempts remaining.";
+                     $_SESSION['msg'] = "Please enter valid login details. $rem_attm attempts remaining.";
+
+                  }
+                  $try_time = time();
+                  mysqli_query($conn, "INSERT INTO loginlogs(IpAddress, TryTime, username) VALUES('$ip_address', '$try_time', '$username')");
                }
+            } else {
+               //$msg = "Please enter valid login details.";
+               $_SESSION['msg'] = "Please enter valid login details.";
             }
          }
       }
+      header('Location: login.php');
+      exit();
    }
-     
+   
    // Getting IP Address
    function getIpAddr(){
       if (!empty($_SERVER['HTTP_CLIENT_IP'])){
@@ -83,71 +109,35 @@
       }else{
          $ipAddr=$_SERVER['REMOTE_ADDR'];
       }
-         return $ipAddr;
+      return $ipAddr;
    }
-   
 
-    // Close the connection
-    mysqli_close($conn);
+   // Close the connection
+   mysqli_close($conn);
 
-   /*if (!$_SESSION) {
-      print_r($_SESSION);
-   } else {
-      echo "No session";
-   }*/
-
+   $_SESSION['redirect'] = 'redirect';
 ?>
 <html>
 <head>
    <title>Login Page</title>
-   <style type = "text/css">
-      body {
-         font-family:Arial, Helvetica, sans-serif;
-         font-size:14px;
-         background-color: rgb(197, 197, 197);
-
-      }
-      label {
-         font-weight:bold;
-         width:100px;
-         font-size:14px;
-      }
-      .box {
-         border:#666666 solid 1px;
-      }
-   </style>
+   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-   <?php echo $_success_message; ?>
-   <div align = "center">
-      <div style = "width:300px; border: solid 1px #333333; " align = "left">
-         <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Login</b></div>
-         <div style = "margin:30px">
-            <form action = "login.php" method = "post">
-               <label>UserName  :</label><input type = "text" name = "username" class = "box" id="loginname"/><br /><br />
-               <label>Password  :</label><input type = "password" name = "password" class = "box" id="loginpass"/><br/><br />
-               <input type = "submit" value = " Submit "/><br />
+   <div class="login-container">
+      <div class="log-container">
+         <div class="login-header"><b>Login</b></div>
+         <div class="login-form-container">
+            <form action="login.php" method="post">
+               <label>Username:</label><input type="text" name="username" class="box" id="username"/><br><br>
+               <label>Password:</label><input type="password" name="password" class="box" id="password"/><br><br>
+               <input type="checkbox" name="remember" id="remember"> Remember Me<br><br>
+               <input type="submit" name="submit" value=" Submit "/><br>
             </form>
-            <div style = "font-size:11px; color:#cc0000; margin-top:10px"><?= $error; ?></div>
-            <div id="result"><?= $msg?></div>
+
+            <div class="login-error-container"><?= isset($_SESSION['error']) ? $_SESSION['error'] : ''; unset($_SESSION['error']); ?></div>
+            <div id="result"><?= isset($_SESSION['msg']) ? $_SESSION['msg'] : ''; unset($_SESSION['msg']); ?></div>
          </div>
       </div>
    </div>
-<script>
-
-   // Remove URL parameters after page reload
-    if (window.location.search.length > 0) {
-      const url = new URL(window.location);
-      url.search = '';
-      window.history.replaceState({}, document.title, url.toString());
-      }
-
-      function formClear() {
-        /*document.getElementById('loginname').value = '';
-        document.getElementById('loginpass').value = '';*/
-    }
-
-</script>
 </body>
 </html>

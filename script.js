@@ -98,6 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
             highlighter(this);
             updateURLParameter('selected_incident_id', this.getAttribute('data-incident-id'));
         });
+        // Add hover effect for the selected incident button
+        button.addEventListener('mouseenter', function() {
+            if (button === previousButton) {
+                button.style.backgroundColor = 'rgb(105, 182, 207)';
+            }
+        });
+        button.addEventListener('mouseleave', function() {
+            if (button === previousButton) {
+                button.style.backgroundColor = 'lightblue';
+            }
+        });
     });
 
     // Automatically select the previously selected incident button when the page loads

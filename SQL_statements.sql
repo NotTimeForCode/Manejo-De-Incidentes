@@ -33,6 +33,8 @@ CREATE TABLE `loginlogs` (
 `TryTime` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+ALTER TABLE loginlogs ADD COLUMN username VARCHAR(255);
+
 INSERT INTO incident_logs (hostname, user, incident)      /* Template for adding incidents */ 
 VALUES ('dyna_automocion_001', 'user1', 'problem1');
 

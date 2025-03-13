@@ -6,7 +6,10 @@
         exit();
     }
 
+    $_success_message = '';
     $_error_message = isset($_GET['error']) ? $_GET['error'] : '';
+    $_success_message = isset($_GET['success']) ? $_GET['success'] : '';
+
 
     if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'redirect') {
         header("Location: login.php");
@@ -20,6 +23,8 @@
      } else {
         echo "No session";
      }*/
+
+     $_SESSION['redirect'] = 'redirect';
 ?>
 
 <!DOCTYPE html>
@@ -28,28 +33,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <?= $_error_message ?>
-
+    
     <div id="main-container">
-
-        <h2>Register</h2>
-
-        <form action="createuser.php" method="post">
-            <label for="username">Username:</label><br>
-            <input type="text" id="username" name="username"><br><br> <!-- minlength="4" maxlength="30" -->
-            
-                                                 <!-- Remember to set minimum and maximum characterlimits on inputfields  -->
-
-            <label for="password">Password:</label><br>                
-            <input type="password" id="password" name="password"><br><br> <!-- minlength="4" maxlength="50" -->
-
-            <input type="submit" value="Register">
-        </form>
-        <br>
-        <a href="index.php">Return</a>
+        <div class="login-container">
+      <div class="log-container">
+         <div class="login-header"><b>Register user account</b></div>
+         <div class="login-form-container">
+            <form action="createuser.php" method="post">
+               <label>Username:</label><input type="text" name="username" id="username"/><br><br>
+               <label>Password:</label><input type="password" name="password" id="password"/><br><br>
+               <div class="btn-row">
+               <input class="submit-btn" type="submit" name="submit" value=" Register "/><br>
+                    <div class="submit-btn-container">
+                        <a href="index.php" class="submit-btn">Return</a>
+                    </div>
+                </div>
+               <br>
+            </form> 
+        <div class="error_message"><?= $_error_message ?></div>
+        <div class="success_message"><?= $_success_message ?></div>
+        </div>
+      </div>
+   </div>
     </div>
+
+    <script>
+        // Remove URL parameters after page reload
+    if (window.location.search.length > 0) {
+      const url = new URL(window.location);
+      url.search = '';
+      window.history.replaceState({}, document.title, url.toString());
+    }
+    </script>
+
 </body>
 </html>

@@ -268,3 +268,74 @@ h1 {
 #data1 {
     margin-top: 50px;
 }
+
+.login-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.log-container {
+    width: 300px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #333;
+}
+
+.login-header {
+    background-color: #333;
+    color: #FFFFFF;
+    padding: 3px;
+}
+
+.login-form-container {
+    margin: 30px;
+}
+
+.login-error-container {
+    font-size: 15px;
+    color: #c00;
+    margin-top: 10px;
+}
+
+#result {
+    font-size: 15px;
+    color: #c00;
+    margin-top: 10px;
+}
+
+.submit-btn-container {
+    position: relative;
+    display: flex;
+    background-color: white;
+    height: 17px;
+    width: 67px;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    margin-left: 34px;
+}
+
+.submit-btn {
+    font-size: 13px;
+    background-color: #FFFFFF;
+    color: black;
+    text-decoration: none;
+}
+
+.btn-row {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+}
+
+.error_message {
+    color: #c00;   
+}
+
+.success_message {
+    color: rgb(0, 155, 0);
+}

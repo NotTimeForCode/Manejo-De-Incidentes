@@ -18,6 +18,13 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
 
+    if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'redirect') {
+        header("Location:login.php");
+        exit();
+    }
+
+    $_SESSION['redirect'] = 'redirect';
+
     // make sure user is logged in
     if(!$_SESSION['login_user']) {
         header("location:login.php");
@@ -68,8 +75,6 @@
      } else {
         echo "No session";
      }*/
-
-    $_SESSION['redirect'] = 'redirect';
 
     // Close the connection
     $conn->close();
@@ -141,7 +146,7 @@
                     <div id="status-btns">
                         <input type="submit" value="Conclude incident" id="concluir" class="form_button concluir">
                         <input type="submit" value="In process" id="proceso" class="form_button proceso">
-                        <input type="submit" value="Neutral" id="neutral" class="form_button neutral">
+                        <input type="submit" value="Neutral" id="neutral" class="form_button neutral"> <!-- Delete when program is finished -->
                     </div>
                 </form>
 
