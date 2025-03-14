@@ -18,6 +18,8 @@
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
 
+    $error = '';
+
     if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'redirect') {
         header("Location:login.php");
         exit();
@@ -62,7 +64,7 @@
                 $incident_logs[] = $row;
             }
         } else {
-            echo "<h1>Error: no incidents found</h1>";
+            $error = "Error: no incidents found";
         }
     }
 
@@ -99,6 +101,9 @@
 
         <!-- Shows all reported incidents.--> 
         <div id="incident_selector_container">
+            
+                <div class="incident_error"><?= $error ?></div>
+            
             <?php foreach ($incident_logs as $incidents): ?>
                 <button class="incident_selector <?= $incidents['incident_status'] === 'In process' ? 'in_process' : ($incidents['incident_status'] === 'Neutral' ? 'neutral' : '') ?>"
                     data-incident-id="<?= htmlspecialchars($incidents['incident_id']) ?>"
@@ -146,7 +151,7 @@
                     <div id="status-btns">
                         <input type="submit" value="Conclude incident" id="concluir" class="form_button concluir">
                         <input type="submit" value="In process" id="proceso" class="form_button proceso">
-                        <input type="submit" value="Neutral" id="neutral" class="form_button neutral"> <!-- Delete when program is finished -->
+                       <!-- For testing  <input type="submit" value="Neutral" id="neutral" class="form_button neutral"> -->
                     </div>
                 </form>
 

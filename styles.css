@@ -105,7 +105,7 @@ h1 {
     display: flex;
     margin-top: 13px;
     margin-bottom: 50px;
-    margin-left: 60px;
+    margin-left: 0px;
 }
 
 .form_button:hover {
@@ -114,8 +114,10 @@ h1 {
 
 .concluir {
     display: flex;
+    position: relative;
     left: 0px;
-    margin-left: 115px;
+    margin-left: 40px;
+    margin-right: 40px;
 }
 
 #status-btns {
@@ -338,4 +340,10 @@ h1 {
 
 .success_message {
     color: rgb(0, 155, 0);
+}
+
+.incident_error {
+    padding-top: 20px;
+    padding-left: 15px;
+    font-size: 23px;
 }

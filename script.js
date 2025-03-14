@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Reset previous button text color based on incident status
             const previousIncidentStatus = previousButton.getAttribute('data-incident-status');
-            if (previousIncidentStatus === 'Neutral') {
+            if (previousIncidentStatus === 'Neutral' || 'NULL' || null || empty) {
                 previousButton.style.color = 'white';
             } else if (previousIncidentStatus === 'In process') {
                 previousButton.style.color = 'black';
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.submit(); // Manually submit the form
     });
 
-    document.querySelector('.form_button.neutral').addEventListener('click', function(event) {
+   /* document.querySelector('.form_button.neutral').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
         console.log('Neutral button clicked'); // Debugging: Log button click
         incidentStatusField.value = 'Neutral';
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         //updateFormAction();
         //logFormData(); // Log form data before submission
         form.submit(); // Manually submit the form
-    });
+    });*/
 
     // Re-add the details field name when the form is submitted for "Concluir incidente"
     form.addEventListener('submit', function() {

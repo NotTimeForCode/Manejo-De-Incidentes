@@ -44,8 +44,8 @@
          <div class="login-header"><b>Register user account</b></div>
          <div class="login-form-container">
             <form action="createuser.php" method="post">
-               <label>Username:</label><input type="text" name="username" id="username"/><br><br>
-               <label>Password:</label><input type="password" name="password" id="password"/><br><br>
+               <label>Username:</label><input type="text" name="username" id="username" minlength="3" maxlength="70" /><br><br>
+               <label>Password:</label><input type="password" name="password" id="password" minlength="5" maxlength="70" /><br><br>
                <div class="btn-row">
                <input class="submit-btn" type="submit" name="submit" value=" Register "/><br>
                     <div class="submit-btn-container">
