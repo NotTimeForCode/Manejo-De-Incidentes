@@ -125,13 +125,13 @@
 <body>
    <div class="login-container">
       <div class="log-container">
-         <div class="login-header"><b>Login</b></div>
+         <div class="login-header"><b>Acceso</b></div>
          <div class="login-form-container">
             <form action="login.php" method="post">
-               <label>Username:</label><input type="text" name="username" class="box" id="username"/><br><br>
-               <label>Password:</label><input type="password" name="password" class="box" id="password"/><br><br>
-               <input type="checkbox" name="remember" id="remember"> Remember Me<br><br>
-               <input type="submit" name="submit" value=" Submit "/><br>
+               <label>Usuario:   </label><input type="text" name="username" class="box" id="username"/><br><br>
+               <label>Contrasena:</label><input type="password" name="password" class="box" id="password"/><br><br>
+               <input type="checkbox" name="remember" id="remember"> Acuérdate de mí<br><br>
+               <input type="submit" name="submit" value=" Entregar "/><br>
             </form>
 
             <div class="login-error-container"><?= isset($_SESSION['error']) ? $_SESSION['error'] : ''; unset($_SESSION['error']); ?></div>

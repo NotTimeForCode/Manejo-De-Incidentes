@@ -55,16 +55,34 @@ def show_question_box():
     answer = messagebox.askyesno("Comprobación del sistema", "¿Has experimentado algún problema con este ordenador?")
 
     if answer:  # If the user clicks "Yes"
-        # Ask for problem details
-        problem_details = simpledialog.askstring("Detalles del problema", "Por favor, describa el problema:")
-        if problem_details and problem_details.strip():
-            # Log the response into the database
-            insert_log(hostname, user, problem_details.strip())
-            messagebox.showinfo("Gracias", "Su problema ha sido registrado")
-        else:
-            messagebox.showinfo("Error", "La descripción del problema no puede estar vacía")
+        # Create a custom dialog for problem details
+        def get_problem_details():
+            problem_details = text_field.get("1.0", tk.END).strip()  # Get text from the multi-line text field
+            if problem_details:
+                insert_log(hostname, user, problem_details)
+                messagebox.showinfo("Gracias", "Su problema ha sido registrado")
+                dialog.destroy()  # Close the custom dialog
+            else:
+                messagebox.showinfo("Error", "La descripción del problema no puede estar vacía")
+
+        # Create a new window for the custom dialog
+        dialog = tk.Toplevel(root)
+        dialog.title("Detalles del problema")
+        tk.Label(dialog, text="Por favor, describa el problema:").pack(pady=5)
+
+        # Multi-line text field
+        text_field = tk.Text(dialog, height=4, width=50)  # Set height to 4 lines
+        text_field.pack(pady=5)
+
+        # Submit button
+        tk.Button(dialog, text="Enviar", command=get_problem_details).pack(pady=5)
+
+        dialog.transient(root)  # Make the dialog modal
+        dialog.grab_set()  # Prevent interaction with other windows
+        root.wait_window(dialog)  # Wait for the dialog to close
     else:
         messagebox.showinfo("Gracias", "¡Me alegra saber que todo está funcionando bien!")
+
 
     root.destroy()  # Close the Tkinter window
 

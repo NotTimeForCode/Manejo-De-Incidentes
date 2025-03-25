@@ -19,12 +19,12 @@
     header("Pragma: no-cache");
 
     $error = '';
-
+    // If redirect variable is not set redirect to login page
     if (!isset($_SESSION['redirect']) || $_SESSION['redirect'] !== 'redirect') {
         header("Location:login.php");
         exit();
     }
-
+    // Set redirect variable
     $_SESSION['redirect'] = 'redirect';
 
     // make sure user is logged in
@@ -33,7 +33,7 @@
         exit();
     }
     $keyword = isset($_GET['search']) ? $_GET['search'] : '';
-
+    // Function for searching incidents
     if ($keyword) {
         // Prepare the SQL query to search based on hostname and user
         $sqlQuery = "SELECT * FROM `incident_logs` WHERE `hostname` LIKE ? OR `user` LIKE ? ORDER BY `hostname`";
@@ -54,63 +54,71 @@
         // Close the statement
         $stmt->close();
     } else {
-        $sqlQuery = "SELECT * FROM incident_logs WHERE incident_status IS NULL OR incident_status = 'Neutral' OR incident_status = 'In process'";
-        $data = mysqli_query($conn, $sqlQuery);
+        // Displays all available incidents if no search term is provided
+            $sqlQuery = "SELECT * FROM incident_logs WHERE incident_status IS NULL OR incident_status = 'Neutral' OR incident_status = 'In process'";
+            $data = mysqli_query($conn, $sqlQuery);
 
-        $incident_logs = [];
+            $incident_logs = [];
 
-        if (mysqli_num_rows($data) > 0) {
-            while ($row = mysqli_fetch_assoc($data)) {
-                $incident_logs[] = $row;
+            // Checks if there are any incidents in the database
+            if (mysqli_num_rows($data) > 0) {
+                while ($row = mysqli_fetch_assoc($data)) {
+                    $incident_logs[] = $row;
+                }
+            } else {
+                $error = "Error: no incidents found";
             }
-        } else {
-            $error = "Error: no incidents found";
         }
-    }
+        // If session variable doesn't exist, redirect to login page
+        if ($_SESSION == "") {
+            header("Location: login.php");
+        }
 
-    if ($_SESSION == "") {
-        header("Location: login.php");
-    }
+        /*if ($_SESSION) {
+            print_r($_SESSION);
+        } else {
+            echo "No session";
+        }*/
 
-    /*if ($_SESSION) {
-        print_r($_SESSION);
-     } else {
-        echo "No session";
-     }*/
+        // Close the connection
+        $conn->close();
+    ?>
 
-    // Close the connection
-    $conn->close();
-?>
-
-<!--<a type="button" id='login-btn' value="Login">Login</a>-->
+    <!-- Top-nav -->
 <div id="header">
     <h1>Manejo de incidentes</h1>
     <div id="btn-container">
-        <a href="logout.php" id="logout-btn">Sign Out</a>
-        <a href="register.php" id="register-btn">Account registration</a>
+        <a href="logout.php" id="logout-btn">Desconectar</a>
+        <a href="register.php" id="register-btn">Registro de cuenta</a>
     </div>
 </div>
+
+    <!--container for website content-->
 <div id="main-container">
 
-    <div id="box-container">
             <!-- Search bar -->
+        <div class="bar-container">
             <form action="index.php" method="get" id="search-form">
-                <input type="text" placeholder="Search by hostname or user..." name="search" id="search">
-                <button type="submit" class="search-btn">Search</button>
+                <input type="text" placeholder="Buscar por nombre de host o usuario..." name="search" id="search">
+                <button type="submit" class="search-btn">Buscar</button>
             </form>
+        </div>
 
-        <!-- Shows all reported incidents.--> 
+            <!-- Shows all reported incidents.--> 
+        <div id="box-container">
+        <div class="container-container">
         <div id="incident_selector_container">
             
                 <div class="incident_error"><?= $error ?></div>
-            
+        <!-- Creates a button for every logged and unconcluded incident -->
             <?php foreach ($incident_logs as $incidents): ?>
-                <button class="incident_selector <?= $incidents['incident_status'] === 'In process' ? 'in_process' : ($incidents['incident_status'] === 'Neutral' ? 'neutral' : '') ?>"
+                <button class="incident_selector <?= $incidents['incident_status'] === 'In process' ? 'in_process' : ($incidents['incident_status'] === 'NULL' ? 'null' : '') ?>"
                     data-incident-id="<?= htmlspecialchars($incidents['incident_id']) ?>"
                     data-hostname="<?= htmlspecialchars($incidents['hostname']) ?>"
                     data-user="<?= htmlspecialchars($incidents['user']) ?>"
                     data-incident="<?= htmlspecialchars($incidents['incident']) ?>"
-                    data-log-time="<?= htmlspecialchars($incidents['log_time']) ?>">
+                    data-log-time="<?= htmlspecialchars($incidents['log_time']) ?>"
+                    data-incident-status="<?= htmlspecialchars($incidents['incident_status']) ?>">
                     <?= htmlspecialchars($incidents['hostname'])?>
                     <br>
                     <?= "id_" . htmlspecialchars($incidents['incident_id'])?>
@@ -118,17 +126,25 @@
                 </button>
             <?php endforeach; ?>
         </div>
+        </div>
     </div>
 
 
 
-    <!-- Holds all data retrieved from database -->
-        <div id="data-container">
+ 
+        
             <!--displays user's last search query-->
-            <h2 id="last_search">Last search: <?= htmlspecialchars($keyword) ?></h2>
-            <div id="data">
+            <div class="search-container">
+                <h2 id="last_search">Última búsqueda: <?= htmlspecialchars($keyword) ?></h2>
+            </div>
 
+               <!-- Holds all data retrieved from database -->
+            <div id="data-container">
+            <div class="container-container">
+
+            <div id="data">
             <form action="submit.php?selected_incident_id=<?= isset($_GET['selected_incident_id']) ? htmlspecialchars($_GET['selected_incident_id']) : '' ?>" method="post" name="incident_form" id="incident_form">
+                <!-- Holds values to be to be logged -->
                     <input type="hidden" name="hostname" value="">
                     <input type="hidden" name="user" value="">
                     <input type="hidden" name="incident_id" value="">
@@ -137,6 +153,8 @@
                     <input type="hidden" name="incident_status" value="">
                     <input type="hidden" name="selected_incident_id" id="selected_incident_id" value="<?= isset($_GET['selected_incident_id']) ? htmlspecialchars($_GET['selected_incident_id']) : '' ?>">
                     <input type="hidden" name="feedback" id="feedback">
+
+                <!-- Data is displayed here -->
                     <h2 id="data1">nombre de host: </h2>
                     <br>
                     <h4 id="data2">nombre del usuario: </h4>
@@ -147,14 +165,16 @@
                     <br>
                     <h4 id="data5">Hora en que se registró el incidente: </h4>
                     <br>
-                    <textarea id="details" name="details" rows="4" placeholder="Feedback on incident (sent upon conclusion)"></textarea>
+                    <textarea id="details" name="details" rows="4" placeholder="Comentarios sobre el incidente (enviados al concluir)"></textarea>
                     <div id="status-btns">
-                        <input type="submit" value="Conclude incident" id="concluir" class="form_button concluir">
-                        <input type="submit" value="In process" id="proceso" class="form_button proceso">
-                       <!-- For testing  <input type="submit" value="Neutral" id="neutral" class="form_button neutral"> -->
+                    <!-- Conclude button sets incident as Concluded and it is no longer displayed on the website -->
+                        <input type="submit" value="Concluir incidente" id="concluir" class="form_button concluir">
+                    <!-- In process button sets incident as In process and it is displayed with dotted borders and yellow background on the website -->
+                        <input type="submit" value="En proceso" id="proceso" class="form_button proceso">
                     </div>
                 </form>
 
+            </div>
             </div>
             <br>
         </div>

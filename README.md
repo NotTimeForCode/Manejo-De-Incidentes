@@ -20,4 +20,3 @@ The bruteforce protection has to control both ip and account name, because the i
 To-Do List:
     comment code
     compatability to different sized screen
-    incident in process text will not return to normal after deselecting it 

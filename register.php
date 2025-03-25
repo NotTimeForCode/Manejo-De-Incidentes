@@ -38,18 +38,18 @@
 <body>
 
     
-    <div id="main-container">
+    <div id="register-main-container">
         <div class="login-container">
       <div class="log-container">
-         <div class="login-header"><b>Register user account</b></div>
+         <div class="login-header"><b>Registrar cuenta de usuario</b></div>
          <div class="login-form-container">
             <form action="createuser.php" method="post">
-               <label>Username:</label><input type="text" name="username" id="username" minlength="3" maxlength="70" /><br><br>
-               <label>Password:</label><input type="password" name="password" id="password" minlength="5" maxlength="70" /><br><br>
+               <label>Usuario:  </label><input type="text" name="username" id="username" minlength="3" maxlength="70" /><br><br>
+               <label>Contrasena:</label><input type="password" name="password" id="password" minlength="5" maxlength="70" /><br><br>
                <div class="btn-row">
-               <input class="submit-btn" type="submit" name="submit" value=" Register "/><br>
+               <input class="submit-btn" type="submit" name="submit" value=" Registrar "/><br>
                     <div class="submit-btn-container">
-                        <a href="index.php" class="submit-btn">Return</a>
+                        <a href="index.php" class="submit-btn">Devolver</a>
                     </div>
                 </div>
                <br>

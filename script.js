@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Reset previous button text color based on incident status
             const previousIncidentStatus = previousButton.getAttribute('data-incident-status');
-            if (previousIncidentStatus === 'Neutral' || 'NULL' || null || empty) {
+            if (previousIncidentStatus === null || '') {
                 previousButton.style.color = 'white';
             } else if (previousIncidentStatus === 'In process') {
                 previousButton.style.color = 'black';
@@ -153,6 +153,8 @@ document.addEventListener('DOMContentLoaded', function() {
         form.submit(); // Manually submit the form
     });
 
+
+    // Handle form submission for "Neutral", used for testing purposes only
    /* document.querySelector('.form_button.neutral').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission
         console.log('Neutral button clicked'); // Debugging: Log button click
